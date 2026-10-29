@@ -1,63 +1,80 @@
 Exercise 11: Redis CLI
 
-The Redis container was already running:
-$ docker ps --format "{{.Names}}|{{.Image}}|{{.Ports}}|{{.Status}}"
-todo-backend-redis-1|redis|0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp|Up 30 minutes
+## 1. Find the todo counter key
 
-Step 1: Find the todo counter key
+```bash
 $ docker exec todo-backend-redis-1 redis-cli KEYS '*'
 added_todos
+```
 
-Step 2: Read the current counter
+## 2. Inspect and set the counter
+
+The counter was `1` before it was changed:
+
+```bash
 $ docker exec todo-backend-redis-1 redis-cli GET added_todos
-2
+1
+```
 
-Step 3: Set the counter to 9001 and verify it
+Set the counter to `9001`:
+
+```bash
 $ docker exec todo-backend-redis-1 redis-cli SET added_todos 9001
 OK
+
 $ docker exec todo-backend-redis-1 redis-cli GET added_todos
 9001
+```
 
-Step 4: Verify the counter through the Express API
+## 3. Verify the counter through the Express API
+
+```bash
 $ curl http://localhost:3000/statistics
 {"added_todos":9001}
+```
 
-Step 5: Create a todo
-Postman request:
-POST http://localhost:3000/todos
-Content-Type: application/json
-{
-  "text": "Exercise 11 Redis CLI todo",
-  "done": false
-}
+## 4. Create a todo and verify that the counter increases
 
-Postman was not available in this workspace, so the same HTTP request was executed locally:
-200
-{"text":"Exercise 11 Redis CLI todo","done":false,"_id":"6ae33772740cf24943c7eff6","__v":0}
+```bash
+$ curl -X POST http://localhost:3000/todos -H "Content-Type: application/json" -d '{"text":"Exercise 11 Redis counter test","done":false}'
+{"text":"Exercise 11 Redis counter test","done":false,"_id":"6ae338d4740cf24943c7effb","__v":0}
+```
 
-Step 6: Confirm that the counter increased
-$ docker exec todo-backend-redis-1 redis-cli GET added_todos
-9002
+The statistics endpoint then returned:
 
-Step 7: Delete the counter key
+```bash
+$ curl http://localhost:3000/statistics
+{"added_todos":9002}
+```
+
+## 5. Delete the counter and test it again
+
+The delete command returned `0`, meaning the key was already absent:
+
+```bash
 $ docker exec todo-backend-redis-1 redis-cli DEL added_todos
-1
+(integer) 0
 
-Step 8: Create another todo after deleting the key
-Postman request:
-POST http://localhost:3000/todos
-Content-Type: application/json
-{
-  "text": "Exercise 11 after DEL",
-  "done": false
-}
-
-The same HTTP request was executed locally:
-200
-{"text":"Exercise 11 after DEL","done":false,"_id":"6ae33778740cf24943c7eff8","__v":0}
-
-Step 9: Verify that the counter starts at 0 and increases to 1
 $ docker exec todo-backend-redis-1 redis-cli GET added_todos
-1
+(nil)
+```
+
+After creating another todo, the response contained this ID:
+
+```text
+6ae3393b740cf24943c7effd
+```
+
+The statistics endpoint then returned:
+
+```bash
 $ curl http://localhost:3000/statistics
 {"added_todos":1}
+```
+
+Redis also contained the recreated counter:
+
+```bash
+$ docker exec todo-backend-redis-1 redis-cli GET added_todos
+1
+```
