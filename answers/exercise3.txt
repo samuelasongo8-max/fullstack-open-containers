@@ -1,0 +1,16 @@
+Exercise 3: Ubuntu 101
+
+Command:
+docker exec -it 372fd7da2fc0 bash
+
+Command:
+cat /usr/src/app/index.js
+
+Output:
+console.log('Hello World')
+
+Command:
+nano /usr/src/app/index.js
+
+Line in the file:
+console.log('Hello World')
