@@ -13,12 +13,17 @@ const TodoView = () => {
   }
 
   useEffect(() => {
-    refreshTodos()
+    const fetchTodos = async () => {
+      const { data } = await axios.get('/todos')
+      setTodos(data)
+    }
+
+    fetchTodos()
   }, [])
 
   const createTodo = async (todo) => {
     const { data } = await axios.post('/todos', todo)
-    setTodos([...todos, data])
+    setTodos(currentTodos => [...currentTodos, data])
   }
 
   const deleteTodo = async (todo) => {
