@@ -1,0 +1,34 @@
+Exercise 4: Ubuntu 102
+
+Command:
+docker exec -it 372fd7da2fc0 bash
+
+Command:
+apt-get update
+
+Command:
+apt-get install -y curl
+
+Command:
+curl -sL https://deb.nodesource.com/setup_24.x | bash
+
+Output:
+Repository configured successfully.
+
+Command:
+apt install -y nodejs
+
+Output:
+Node.js 24.22.2 installed successfully.
+
+Command:
+node --version
+
+Output:
+v24.22.2
+
+Command:
+node /usr/src/app/index.js
+
+Output:
+Hello World
