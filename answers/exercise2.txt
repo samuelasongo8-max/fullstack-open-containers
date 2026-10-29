@@ -1,0 +1,32 @@
+Exercise 2: Running your second container
+
+Command:
+docker container run -it ubuntu bash
+
+Output:
+Ubuntu container started.
+root@372fd7da2fc0:/#
+
+Command:
+mkdir -p /usr/src/app
+
+Output:
+No output. The directory was created successfully.
+
+Command:
+touch /usr/src/app/index.js
+
+Output:
+No output. The empty file was created successfully.
+
+Command:
+ls -l /usr/src/app/index.js
+
+Output:
+-rw-r--r-- 1 root root 0 Oct 29 09:03 /usr/src/app/index.js
+
+Command:
+exit
+
+Output:
+Returned to Git Bash.
