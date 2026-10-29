@@ -1,0 +1,60 @@
+Exercise 8: Mongo CLI
+
+Step 1: Run MongoDB
+$ docker compose -f docker-compose.dev.yml ps
+NAME                   IMAGE     SERVICE   STATUS
+todo-backend-mongo-1   mongo     mongo     Up
+
+Step 2: Enter the MongoDB container
+$ docker exec -it todo-backend-mongo-1 bash
+
+Step 3: Open Mongo CLI
+root@container:/# mongosh -u root -p example
+
+Step 4: Show databases
+test> show dbs
+admin         100.00 KiB
+config         96.00 KiB
+local         72.00 KiB
+the_database  56.00 KiB
+
+Step 5: Select the database
+test> use the_database
+switched to db the_database
+
+Step 6: Show collections
+the_database> show collections
+todos
+
+Step 7: View existing todos
+the_database> db.todos.find({})
+[
+  { _id: ObjectId('6ae323261eac70c82f7aeaff'), text: 'Write code', done: true },
+  { _id: ObjectId('6ae323261eac70c82f7aeb00'), text: 'Learn about containers - updated', done: true }
+]
+
+Step 8: Insert a new todo
+the_database> db.todos.insertOne({
+  text: "Increase the number of tools in my tool belt",
+  done: false
+})
+{
+  acknowledged: true,
+  insertedId: ObjectId('6ae32c4e457be10cbb322c1e')
+}
+
+Step 9: Verify todos in Mongo CLI
+the_database> db.todos.find({})
+[
+  { _id: ObjectId('6ae323261eac70c82f7aeaff'), text: 'Write code', done: true },
+  { _id: ObjectId('6ae323261eac70c82f7aeb00'), text: 'Learn about containers - updated', done: true },
+  {
+    _id: ObjectId('6ae32c4e457be10cbb322c1e'),
+    text: 'Increase the number of tools in my tool belt',
+    done: false
+  }
+]
+
+Step 10: Verify the new todo through Express
+$ curl http://localhost:3000/todos
+[{"_id":"6ae323261eac70c82f7aeaff","text":"Write code","done":true},{"_id":"6ae323261eac70c82f7aeb00","text":"Learn about containers - updated","done":true},{"_id":"6ae32c4e457be10cbb322c1e","text":"Increase the number of tools in my tool belt","done":false}]
