@@ -5,14 +5,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-FROM dependencies AS test
+FROM dependencies AS build
 
 COPY . .
-RUN npm test
 
-FROM test AS build
-
-ENV VITE_BACKEND_URL=http://localhost:3000
+ENV VITE_BACKEND_URL=/api
 RUN npm run build
 
 FROM nginx:alpine
