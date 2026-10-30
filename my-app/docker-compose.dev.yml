@@ -1,0 +1,38 @@
+services:
+  frontend:
+    build:
+      context: ../../phonebook-exercise21/phonebook-app/frontend
+      dockerfile: ../../../fs-containers/my-app/frontend/dev.Dockerfile
+    volumes:
+      - type: bind
+        source: ../../phonebook-exercise21/phonebook-app/frontend
+        target: /usr/src/app
+        read_only: true
+      - /usr/src/app/node_modules
+    expose:
+      - "5173"
+
+  backend:
+    build:
+      context: ../../phonebook-exercise21/phonebook-app/backend
+      dockerfile: ../../../fs-containers/my-app/backend/dev.Dockerfile
+    environment:
+      PORT: "3001"
+    volumes:
+      - type: bind
+        source: ../../phonebook-exercise21/phonebook-app/backend
+        target: /usr/src/app
+        read_only: true
+      - /usr/src/app/node_modules
+    expose:
+      - "3001"
+
+  nginx:
+    image: nginx:1.29
+    ports:
+      - "8081:80"
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
